@@ -1,5 +1,6 @@
 import { apiConf } from './config.js';
 import { respondWithJSON } from './json.js';
+import { ExceedLimitError } from './errorHandler.js';
 //export type middmiddlewereLogResponseslewere = (req : Request, res: Response, next: NextFunction) => void;
 export function middlewareLogResponses(req, res, next) {
     res.on('finish', () => {
@@ -30,10 +31,7 @@ export function validateLength(req, res) {
     let msg = req.body.body;
     res.contentType('application/json');
     if (msg.length > 140) {
-        respondWithJSON(res, 400, {
-            "error": "Chirp is too long"
-        });
-        return;
+        throw new ExceedLimitError('Chirp is too long. Max length is 140');
     }
     // else
     let tmp = msg.toLocaleLowerCase();
