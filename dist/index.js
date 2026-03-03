@@ -1,15 +1,15 @@
 import express from "express";
-import { fileServerHits, hitsPrint, hitsReset, middlewareLogResponses } from "./middlewere.js";
+import { fileServerHits, hitsPrint, hitsReset, middlewareLogResponses } from "./api/middlewere.js";
 const app = express();
 const PORT = 8080;
 app.use("/app", fileServerHits, express.static('./src/app'));
+app.get('/api/healthz', readinessHandler);
 app.use(middlewareLogResponses);
-app.use('/metrics', hitsPrint);
-app.use('/reset', hitsReset);
+app.use('/admin/reset', hitsReset);
+app.use('/admin/metrics', hitsPrint);
 app.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`);
 });
-app.get('/healthz', readinessHandler);
 function readinessHandler(req, res) {
     res.set('Content-Type', 'text/plain; charset=utf-8');
     res.send('OK');

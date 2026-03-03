@@ -29,8 +29,11 @@ export function fileServerHits(req: Request, res: Response, next: NextFunction){
 }
 
 export function hitsPrint(req: Request, res: Response, next: NextFunction){
-
-    res.send(`<h2>Hits: ${apiConf.fileserverHits}<h2>`);
+     
+    res.contentType('text/html;charset=utf-8');
+    res.send(`<h1>Welcome, Chirpy Admin</h1>
+          <p>Chirpy has been visited ${apiConf.fileserverHits} times!</p>`);
+    
 
     next();
 }
