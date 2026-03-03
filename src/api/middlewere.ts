@@ -1,6 +1,7 @@
 import express, { NextFunction } from 'express';
 import { Request, Response } from 'express';
 import { apiConf } from './config.js';
+import { respondWithJSON } from './json.js';
 
 //export type middmiddlewereLogResponseslewere = (req : Request, res: Response, next: NextFunction) => void;
 
@@ -38,12 +39,68 @@ export function hitsPrint(req: Request, res: Response, next: NextFunction){
     next();
 }
 
+
 export function hitsReset(req: Request, res: Response, next: NextFunction){
 
     apiConf.fileserverHits=0;
     res.send();
 
     next();
+
+}
+
+export function validateLength(req: Request, res: Response){
+
+    //let body = "";
+    let msg: string = req.body.body;
+    res.contentType('application/json');
+
+    if(msg.length >140){
+        respondWithJSON(res, 400,{
+        "error": "Chirp is too long"
+        });
+        return;
+    }
+
+    // else
+        let tmp = msg.toLocaleLowerCase();
+
+        let split = msg.split(' ');
+        let profines = [/kerfuffle/i ,/sharbert/i ,/fornax/i ];
+        profines.forEach((e) => {
+            
+            for (let i =0 ; i< split.length ; i++){
+                if(split[i].toLocaleLowerCase().match(e))
+                    split[i]= '****';
+            }
+
+        });
+        
+        let result = split.join(" ");
+
+        respondWithJSON(res,200,{
+            "cleanedBody": result
+            });
+
+    
+   /*  req.on('data',(c)=>{
+        body +=c;
+    });
+
+    req.on('end',()=>{
+        let b = req.body;
+   
+        try {
+            b = JSON.parse(body);    
+        } catch (error) {
+            
+            res.status(404).send(`{
+                "error": "somthing went wrong"
+                }`);
+        }
+
+        
+ }); */
 
 }
 

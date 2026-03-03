@@ -1,17 +1,23 @@
 import express from "express";
 import { Response, Request } from "express";
-import { fileServerHits, hitsPrint, hitsReset, middlewareLogResponses } from "./api/middlewere.js";
+import { fileServerHits, hitsPrint, hitsReset, middlewareLogResponses, validateLength } from "./api/middlewere.js";
+
 const app = express();
 const PORT = 8080;
 
-app.use("/app",fileServerHits, express.static('./src/app'))
+app.use("/app",fileServerHits, express.static('./src/app'));
+app.use(middlewareLogResponses);
+app.use(express.json());
+
 app.get('/api/healthz',readinessHandler);
 
-app.use(middlewareLogResponses);
 
-app.use('/admin/reset', hitsReset);
 
 app.use('/admin/metrics', hitsPrint);  
+
+
+app.post('/admin/reset', hitsReset);
+app.post('/api/validate_chirp',validateLength);
 
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
