@@ -22,3 +22,12 @@ export function errorHandler(err: Error, req: Request, res: Response, next: Next
         });
 
 }   
+
+export function envOrThrow(key: string){
+
+    if(!key)
+        throw new Error();
+
+    return key;
+
+}

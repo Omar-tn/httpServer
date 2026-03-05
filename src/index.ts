@@ -1,8 +1,18 @@
 import express from "express";
 import { Response, Request } from "express";
-import { fileServerHits, hitsPrint, hitsReset, middlewareLogResponses, validateLength } from "./api/middlewere.js";
+import { fileServerHits, hitsPrint, hitsReset, middlewareLogResponses } from "./api/middlewere.js";
+import { createChirpsHandler } from './api/chirp.js';
+import { clearUsers } from './api/user.js';
 import { errorHandler } from "./api/errorHandler.js";
-
+import postgres from "postgres";
+import { migrate } from "drizzle-orm/postgres-js/migrator";
+import { drizzle } from "drizzle-orm/postgres-js";
+import { apiConf } from "./config.js";
+import { accepteUser } from "./api/user.js";
+import { createChirp } from "./db/queries/chirps.js";
+import { chirpsHandler , getChirpHandler} from "./api/chirp.js";
+const migrationClient = postgres(apiConf.db.dbURL, { max: 1 });
+await migrate(drizzle(migrationClient), apiConf.db.migration);
 const app = express();
 const PORT = 8080;
 
@@ -10,22 +20,29 @@ app.use("/app",fileServerHits, express.static('./src/app'));
 app.use(middlewareLogResponses);
 app.use(express.json());
 
-app.get('/api/healthz',readinessHandler);
 
 
 
 app.use('/admin/metrics', hitsPrint);  
 
 
-app.post('/admin/reset', hitsReset);
-app.post('/api/validate_chirp',async (req, res, next)=> {
+app.post('/admin/reset', clearUsers);
+//app.post('/api/validate_chirp');
+
+
+app.get('/api/healthz', readinessHandler);
+app.get('/api/chirps', chirpsHandler);
+app.get('/api/chirps/:chirpId',getChirpHandler);
+
+
+app.post('/api/users',accepteUser);
+app.post('/api/chirps',async (req, res, next)=> {
   try {
-    validateLength(req, res);
+    createChirpsHandler(req, res);
   } catch (error) {
     next(error);
   }
 });
-
 
 app.use(errorHandler);
 
