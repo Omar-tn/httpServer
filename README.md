@@ -1,4 +1,6 @@
 
+http server with RESTful api, enable users to make chrimps and get them
+
 =============================================================
 =============================================================
 
@@ -76,6 +78,19 @@ set-up:
     make .env file in root file and put this format:
 
         -   DB_URL="YOUR_CONNECTION_STRING_HERE"
+        
+        -   *   run: openssl rand -base64 64 
+            *   put the result in the file with name: SECRET => SECRET = 'VALUE'
+            
+
+
+    
+    depenendancy for hashing:
+        -   npm i argon2
+
+    JWT:
+        -   npm i jsonwebtoken
+        -   npm i -D @types/jsonwebtoken
 
 ==============================================================
 ==============================================================

@@ -1,7 +1,7 @@
 import express from "express";
 import { fileServerHits, hitsPrint, middlewareLogResponses } from "./api/middlewere.js";
-import { createChirpsHandler } from './api/chirp.js';
-import { clearUsers } from './api/user.js';
+import { chirpDeletionHandler, createChirpsHandler } from './api/chirp.js';
+import { clearUsers, userChangeinfo } from './api/user.js';
 import { errorHandler } from "./api/errorHandler.js";
 import postgres from "postgres";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
@@ -9,6 +9,8 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import { apiConf } from "./config.js";
 import { accepteUser } from "./api/user.js";
 import { chirpsHandler, getChirpHandler } from "./api/chirp.js";
+import { loginHandler } from "./api/login.js";
+import { refreshTokenHandler, revokeHandler } from "./api/refresh_token.js";
 const migrationClient = postgres(apiConf.db.dbURL, { max: 1 });
 await migrate(drizzle(migrationClient), apiConf.db.migration);
 const app = express();
@@ -23,14 +25,12 @@ app.get('/api/healthz', readinessHandler);
 app.get('/api/chirps', chirpsHandler);
 app.get('/api/chirps/:chirpId', getChirpHandler);
 app.post('/api/users', accepteUser);
-app.post('/api/chirps', async (req, res, next) => {
-    try {
-        createChirpsHandler(req, res);
-    }
-    catch (error) {
-        next(error);
-    }
-});
+app.post('/api/chirps', createChirpsHandler);
+app.post('/api/login', loginHandler);
+app.post('/api/refresh', refreshTokenHandler);
+app.post('/api/revoke', revokeHandler);
+app.put('/api/users', userChangeinfo);
+app.delete('/api/chirps/:chirpId', chirpDeletionHandler);
 app.use(errorHandler);
 app.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`);

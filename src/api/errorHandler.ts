@@ -7,12 +7,26 @@ export class ExceedLimitError extends Error {
 
 }
 
+export class InvalidTokenError extends Error {
+    constructor(message: string){
+        super(message);
+    }
+
+}
+
+
+
 export function errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
 
     console.log(err);
     
     if(err  instanceof ExceedLimitError)
         res.status(400).json({
+            error: err.message
+        });
+
+    else if( err instanceof InvalidTokenError)
+        res.status(401).json({
             error: err.message
         });
 

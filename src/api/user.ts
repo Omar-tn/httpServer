@@ -1,16 +1,25 @@
-import { NextFunction, Request, Response } from "express";
-import { createUser, deleteAllUsers } from "../db/queries/users.js";
+import e, { NextFunction, Request, Response } from "express";
+import { createUser, deleteAllUsers, updateEmailPasword } from "../db/queries/users.js";
 import { NewUser } from "../db/schema.js"; 
 import { apiConf } from "../config.js";
+import { getBearerToken, hashPassword, validateJWT } from "../auth/auth.js";
+import { respondWithJSON } from "./json.js";
 //import s from '../db/queries/'
 export async function accepteUser(req: Request, res: Response, next: NextFunction){
 
     let body= req.body;
-    let user : NewUser = {
-        email: body.email
+    let password = body.password;
+    let hashed = await hashPassword(password);
+    let user: NewUser = {
+        email: body.email,
+        hashed_password: hashed
     }
-    let newUser= await createUser(user);
+    
+    let userCreated= await createUser(user);
 
+    let {hashed_password, ...newUser} = userCreated;
+    
+  
     res.status(201).json(newUser);
 
 
@@ -28,3 +37,28 @@ export async function accepteUser(req: Request, res: Response, next: NextFunctio
 
 }
 
+
+export async function userChangeinfo(req:Request, res: Response) {
+    
+    let acc_token = getBearerToken(req);
+    let email = req.body.email;
+    let password = req.body.password;
+
+    let hashed = await hashPassword(password);
+
+    let userId = validateJWT(acc_token,apiConf.api.secret);
+
+    let resl = await updateEmailPasword(userId, email, hashed);
+
+    
+    if(!resl){
+        respondWithJSON(res,400, {error: "something went wrong in updating"});
+        return;
+    
+    }
+
+    respondWithJSON(res, 200, resl);
+
+
+
+}

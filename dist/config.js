@@ -5,6 +5,7 @@ export let apiConf = {
     api: {
         fileserverHits: 0,
         platform: envOrThrow(process.env.PLATFORM),
+        secret: envOrThrow(process.env.SECRET)
     },
     db: {
         dbURL: envOrThrow(process.env.DB_URL),

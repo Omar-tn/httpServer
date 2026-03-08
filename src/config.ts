@@ -10,7 +10,9 @@ process.loadEnvFile();
 
 type APIConfig = {
     fileserverHits: number,
-    platform: string
+    platform: string,
+    secret: string
+
    
 }
 
@@ -21,6 +23,8 @@ export let apiConf: {
     api:{
         fileserverHits: 0,
         platform: envOrThrow(process.env.PLATFORM!),
+        secret: envOrThrow(process.env.SECRET!)
+
     },
     db:{
 
