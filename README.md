@@ -81,7 +81,8 @@ set-up:
         
         -   *   run: openssl rand -base64 64 
             *   put the result in the file with name: SECRET => SECRET = 'VALUE'
-            
+
+        -   add POLKA_KEY = 'API_KEY', use for example -> f271c81ff7084ee5b99a5091b42d486e       
 
 
     

@@ -63,17 +63,30 @@ export function getBearerToken(req: Request): string {
 
     
     let value = req.get('Authorization');
-    if(!value || !value.startsWith('Bearer ')) 
+    return getAuthorizationValue(value,'Bearer ');
+
+
+}
+
+function getAuthorizationValue(authValue: string | undefined, prefix: string) {
+    if (!authValue || !authValue.startsWith(prefix))
         throw new InvalidTokenError('missing auth header');
-    let token = value.split(' ')[1];
-    if(!token) throw new InvalidTokenError('missing auth header');
+    let token = authValue.split(' ')[1];
+    if (!token) throw new InvalidTokenError('missing auth header');
     return token;
-
-
 }
 
 export function makeRefreshToken(){
 
     return crypto.randomBytes(32).toString('hex');
+
+}
+
+export function getAPIKey(req: Request){
+
+    let auth = req.get('Authorization');
+
+    return getAuthorizationValue(auth, 'ApiKey ');
+
 
 }

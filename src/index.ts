@@ -2,7 +2,7 @@ import express from "express";
 import { Response, Request } from "express";
 import { fileServerHits, hitsPrint, hitsReset, middlewareLogResponses } from "./api/middlewere.js";
 import { chirpDeletionHandler, createChirpsHandler } from './api/chirp.js';
-import { clearUsers, userChangeinfo } from './api/user.js';
+import { clearUsers, eventUserHandler, userChangeinfo } from './api/user.js';
 import { errorHandler, InvalidTokenError } from "./api/errorHandler.js";
 import postgres from "postgres";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
@@ -48,6 +48,7 @@ app.post('/api/refresh',refreshTokenHandler);
 app.post('/api/revoke',revokeHandler);
 
 
+app.post('/api/polka/webhooks',eventUserHandler);
 
 app.put('/api/users',userChangeinfo);
 

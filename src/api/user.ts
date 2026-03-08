@@ -1,8 +1,8 @@
 import e, { NextFunction, Request, Response } from "express";
-import { createUser, deleteAllUsers, updateEmailPasword } from "../db/queries/users.js";
+import { createUser, deleteAllUsers, updateEmailPasword, upgradeUser } from "../db/queries/users.js";
 import { NewUser } from "../db/schema.js"; 
 import { apiConf } from "../config.js";
-import { getBearerToken, hashPassword, validateJWT } from "../auth/auth.js";
+import { getAPIKey, getBearerToken, hashPassword, validateJWT } from "../auth/auth.js";
 import { respondWithJSON } from "./json.js";
 //import s from '../db/queries/'
 export async function accepteUser(req: Request, res: Response, next: NextFunction){
@@ -60,5 +60,50 @@ export async function userChangeinfo(req:Request, res: Response) {
     respondWithJSON(res, 200, resl);
 
 
+
+}
+
+
+export async function eventUserHandler(req:Request, res: Response) {
+    
+    let key =getAPIKey(req);
+
+    if (key !== apiConf.api.polka){
+        respondWithJSON(res,401,'Authorization failed');
+        return;
+    }
+
+    let event = req.body.event;
+    if (!event){
+        respondWithJSON(res, 400, {error: "no event in body"});
+        return;
+    } 
+    if(event != 'user.upgraded'){
+        respondWithJSON(res, 204);
+        return;
+    }
+    let userId;
+    if(req.body.data)
+        userId = req.body.data.userId;
+    let r;
+    try{
+        r = await upgradeUser(userId);
+
+        if(!r)
+            throw new Error();
+    }catch(e){
+
+        respondWithJSON(res, 404, 'User not found');
+        return;
+    
+    }
+
+    //let {is_chirpy_red, ...rs }= r;
+
+
+    respondWithJSON(res, 204,r);
+
+
+    
 
 }

@@ -1,7 +1,7 @@
 import express from "express";
 import { fileServerHits, hitsPrint, middlewareLogResponses } from "./api/middlewere.js";
 import { chirpDeletionHandler, createChirpsHandler } from './api/chirp.js';
-import { clearUsers, userChangeinfo } from './api/user.js';
+import { clearUsers, eventUserHandler, userChangeinfo } from './api/user.js';
 import { errorHandler } from "./api/errorHandler.js";
 import postgres from "postgres";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
@@ -29,6 +29,7 @@ app.post('/api/chirps', createChirpsHandler);
 app.post('/api/login', loginHandler);
 app.post('/api/refresh', refreshTokenHandler);
 app.post('/api/revoke', revokeHandler);
+app.post('/api/polka/webhooks', eventUserHandler);
 app.put('/api/users', userChangeinfo);
 app.delete('/api/chirps/:chirpId', chirpDeletionHandler);
 app.use(errorHandler);
