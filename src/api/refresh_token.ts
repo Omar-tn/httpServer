@@ -15,7 +15,7 @@ export async function refreshTokenHandler(req:Request, res: Response) {
         respondWithJSON(res, 401, "invalid refresh token");
         return;
     }
-
+    
     let newToken = makeJWT(user_token.users.id, 3600, apiConf.api.secret);
 
     respondWithJSON(res, 200, {token: newToken});

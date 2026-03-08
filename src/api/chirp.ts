@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import { createChirp, deleteChirpById, getAllChirps, getChirp } from '../db/queries/chirps.js';
+import e, { Request, Response } from 'express';
+import { createChirp, deleteChirpById, getAllChirps, getChirp, getChirpsByAutherId } from '../db/queries/chirps.js';
 import { NewChirp } from '../db/schema.js';
 import { ExceedLimitError } from './errorHandler.js';
 import { respondWithJSON } from './json.js';
@@ -17,7 +17,7 @@ export async function createChirpsHandler(req: Request, res: Response) {
             return;
         }
         let userId = validateJWT(token,apiConf.api.secret);
-
+        
         let msg: string = req.body.body;
         res.contentType('application/json');
 
@@ -82,7 +82,22 @@ export async function createChirpsHandler(req: Request, res: Response) {
 
 export async function chirpsHandler(req: Request, res: Response) {
 
-    let r = await getAllChirps();
+    let autherId = req.query.authorId as string;
+    let sort = req.query.sort as string || 'asc';
+    
+    let r;
+       
+    if(autherId){
+        r = await getChirpsByAutherId(autherId);
+    }
+    else
+        r = await getAllChirps();
+    
+    //sort on the created_at date
+        if(sort == 'desc')
+            r.sort((a,b)=> new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        if(sort == 'asc')
+            r.sort((a, b)=> new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
     respondWithJSON(res, 200, r);
 
 }

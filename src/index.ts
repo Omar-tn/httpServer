@@ -34,27 +34,27 @@ app.post('/admin/reset', clearUsers);
 
 
 app.get('/api/healthz', readinessHandler);
-app.get('/api/chirps', chirpsHandler);
-app.get('/api/chirps/:chirpId',getChirpHandler);
+app.get('/api/chirps', chirpsHandler);//
+app.get('/api/chirps/:chirpId',getChirpHandler);//
 
 
-app.post('/api/users',accepteUser);
-app.post('/api/chirps',createChirpsHandler);
+app.post('/api/users',accepteUser);//
+app.post('/api/chirps',createChirpsHandler);//
 
-app.post('/api/login',loginHandler);
+app.post('/api/login',loginHandler);//
 
-app.post('/api/refresh',refreshTokenHandler);
+app.post('/api/refresh',refreshTokenHandler);//
 
-app.post('/api/revoke',revokeHandler);
-
-
-app.post('/api/polka/webhooks',eventUserHandler);
-
-app.put('/api/users',userChangeinfo);
+app.post('/api/revoke',revokeHandler);//
 
 
+app.post('/api/polka/webhooks',eventUserHandler);//
 
-app.delete('/api/chirps/:chirpId',chirpDeletionHandler)
+app.put('/api/users',userChangeinfo);//
+
+
+
+app.delete('/api/chirps/:chirpId',chirpDeletionHandler)//
 
 app.use(errorHandler);
 
