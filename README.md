@@ -1,5 +1,5 @@
 
-# http server with RESTful API, enable users to make chrips and get and manage them
+# http server with RESTful API, enable users to make chirps and get and manage them
 
 ## API overview:
 
